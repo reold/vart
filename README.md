@@ -1,42 +1,67 @@
-# sv
+# VART frontend
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A mobile-first school attendance frontend for the [VART Worker API](https://vart.reold.workers.dev/docs). Built with SvelteKit 5, Tailwind CSS 4, TypeScript and the static adapter.
 
-## Creating a project
+## Included flows
 
-If you're seeing this, you've probably already done this step. Congrats!
+- First-run administrator setup
+- Tap-your-name login with a six-digit PIN
+- Teacher dashboard with seven-period class progress
+- Copy-previous-period attendance, including the collapsed “absent earlier” flow
+- Full-snapshot attendance submission with present, absent and late marks
+- Class-day, per-student and low-attendance reports
+- Role-gated management for staff, students, classes, subjects, enrollments and academic years
+- Dark-only, high-contrast Apple color system tuned for outdoor legibility
+- Responsive desktop sidebar and mobile tab bar
 
-```sh
-# create a new project
-npx sv create my-app
-```
+The UI intentionally hides administration from plain teachers even though some current `/admin/*` handlers only require authentication. It never renders or logs the PIN hash/salt fields returned by the staff endpoint.
 
-To recreate this project with the same configuration:
+## Local development
 
-```sh
-# recreate this project
-bun x sv@0.16.6 create --template minimal --types ts --add tailwindcss="plugins:none" --install bun frontend
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+```bash
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Open <http://localhost:5173>. The browser calls `https://vart.reold.workers.dev` directly; Vite does not proxy or rewrite API requests.
 
-To create a production version of your app:
+To target a different Worker deployment:
 
-```sh
+```bash
+VITE_API_URL=https://another-worker.example npm run dev
+```
+
+Useful checks:
+
+```bash
+npm run check
 npm run build
+npm run preview
 ```
 
-You can preview the production build with `npm run preview`.
+## Configuration
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+| Variable | Purpose | Default |
+|---|---|---|
+| `VITE_API_URL` | Browser-facing API origin in development and production | `https://vart.reold.workers.dev` |
+| `BASE_PATH` | SvelteKit asset base, such as `/vart` on GitHub Pages | empty |
+
+See `.env.example` for a starting point.
+
+## GitHub Pages
+
+The workflow in `.github/workflows/deploy.yml` builds the static app at `/vart` and points it at the deployed Worker.
+
+The Worker must include the localhost and GitHub Pages origins in `ALLOWED_ORIGINS` and allow the `Authorization` request header. For cross-site deployments, the frontend stores the session bearer token returned by `POST /auth/login` in `sessionStorage` and sends it on later requests. It deliberately omits cookie credentials. Logout revokes the server session and removes the stored token.
+
+This bearer flow is the API’s documented fallback for cross-site frontends. It avoids third-party-cookie and `SameSite` restrictions on GitHub Pages, Safari and iOS, while clearing the browser copy when the tab closes. A same-origin deployment automatically prefers the API’s HttpOnly cookie because it keeps the session token unavailable to JavaScript.
+
+## API behavior represented in the UI
+
+- Attendance submission always sends a mark for every rostered student.
+- Existing attendance for today can be reviewed and overwritten.
+- Dates use the server’s UTC day.
+- Inferred report statuses are visually faded and outlined.
+- Raw day reports are clearly identified as non-inferred.
+- Student records are deactivated instead of deleted to preserve attendance history.
+- Only administrator roles can access school management screens.
