@@ -195,7 +195,7 @@
   {:else if tab === 'student'}
     <section class="grid gap-5 xl:grid-cols-[300px_minmax(0,1fr)]">
       <div class="surface-card h-fit p-3">
-        <label class="relative block"><span class="sr-only">Search students</span><Search class="absolute top-3 left-3 text-apple-tertiary" size={16} /><input class="field-input pl-9" type="search" enterkeyhint="search" autocomplete="off" bind:value={search} placeholder="Search students" /></label>
+        <label class="relative block"><span class="sr-only">Search students</span><Search class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-apple-tertiary" size={16} /><input class="field-input pl-9!" type="search" enterkeyhint="search" autocomplete="off" bind:value={search} placeholder="Search students" /></label>
         <div class="mt-2 max-h-[430px] overflow-y-auto">
           {#if students.length === 0}<p class="p-5 text-center text-sm text-apple-secondary">No active students found.</p>{/if}
           {#each filteredStudents as student}

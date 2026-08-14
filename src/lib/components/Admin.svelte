@@ -279,7 +279,7 @@
   {:else if tab === 'staff'}
     <section>
       <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <label class="relative block sm:w-72"><span class="sr-only">Search staff</span><Search class="absolute top-3 left-3 text-apple-tertiary" size={16} /><input class="field-input pl-9" type="search" enterkeyhint="search" autocomplete="off" bind:value={search} placeholder="Search staff" /></label>
+        <label class="relative block sm:w-72"><span class="sr-only">Search staff</span><Search class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-apple-tertiary" size={16} /><input class="field-input pl-9!" type="search" enterkeyhint="search" autocomplete="off" bind:value={search} placeholder="Search staff" /></label>
         <button class="primary-button" type="button" onclick={() => openModal('staff')}><Plus size={17} /> Add staff member</button>
       </div>
       <div class="surface-card overflow-hidden p-0!">
@@ -301,7 +301,7 @@
   {:else if tab === 'students'}
     <section>
       <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <label class="relative block sm:w-72"><span class="sr-only">Search students</span><Search class="absolute top-3 left-3 text-apple-tertiary" size={16} /><input class="field-input pl-9" type="search" enterkeyhint="search" autocomplete="off" bind:value={search} placeholder="Name or admission number" /></label>
+        <label class="relative block sm:w-72"><span class="sr-only">Search students</span><Search class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-apple-tertiary" size={16} /><input class="field-input pl-9!" type="search" enterkeyhint="search" autocomplete="off" bind:value={search} placeholder="Name or admission number" /></label>
         <button class="primary-button" type="button" onclick={() => openModal('student')}><Plus size={17} /> Add student</button>
       </div>
       <div class="surface-card overflow-hidden p-0!">
