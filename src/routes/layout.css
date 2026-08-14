@@ -494,6 +494,45 @@ select {
   box-shadow: 0 1px 4px rgba(255, 159, 10, 0.22);
 }
 
+.segmented-control {
+  display: inline-flex;
+  gap: 0.2rem;
+  border-radius: 0.75rem;
+  background: var(--color-apple-surface);
+  border: 1px solid var(--color-apple-separator);
+  padding: 0.2rem;
+}
+
+.segment {
+  display: inline-flex;
+  min-height: 2.15rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.55rem;
+  padding: 0.3rem 0.9rem;
+  color: var(--color-apple-tertiary);
+  font-size: 0.78rem;
+  font-weight: 650;
+  outline: none;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.segment:focus-visible {
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.22);
+}
+
+.segment-active {
+  background: var(--color-apple-surface-raised);
+  color: var(--color-apple-label);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+@media (pointer: coarse) {
+  .segment {
+    min-height: 2.5rem;
+  }
+}
+
 .tab-button {
   display: inline-flex;
   min-height: 2.75rem;
