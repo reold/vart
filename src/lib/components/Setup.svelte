@@ -70,11 +70,11 @@
       <div class="grid gap-4 sm:grid-cols-2">
         <div>
           <label class="field-label" for="setup-pin">6-digit PIN</label>
-          <input class="field-input tracking-[0.25em]" id="setup-pin" bind:value={pin} type="password" inputmode="numeric" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" placeholder="••••••" required />
+          <input class="field-input tracking-[0.25em]" id="setup-pin" bind:value={pin} type="password" inputmode="numeric" enterkeyhint="next" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" placeholder="••••••" required />
         </div>
         <div>
           <label class="field-label" for="confirm-pin">Confirm PIN</label>
-          <input class="field-input tracking-[0.25em]" id="confirm-pin" bind:value={confirmPin} type="password" inputmode="numeric" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" placeholder="••••••" required />
+          <input class="field-input tracking-[0.25em]" id="confirm-pin" bind:value={confirmPin} type="password" inputmode="numeric" enterkeyhint="done" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" placeholder="••••••" required />
         </div>
       </div>
 

@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import {
     BookOpen,
+    ArchiveRestore,
     CalendarRange,
     Check,
     ChevronDown,
@@ -10,7 +11,6 @@
     GraduationCap,
     KeyRound,
     LoaderCircle,
-    MoreHorizontal,
     Pencil,
     Plus,
     RefreshCw,
@@ -44,6 +44,7 @@
   let error = $state('');
   let toast = $state('');
   let search = $state('');
+  let classFilter = $state<'active' | 'archived'>('active');
 
   // Shared modal form state
   let formName = $state('');
@@ -66,6 +67,12 @@
   const filteredUsers = $derived(users.filter((item) => `${item.display_name} ${item.login_name ?? ''}`.toLowerCase().includes(search.toLowerCase())));
   const activeStudents = $derived(students.filter((item) => item.active === 1));
   const activeClasses = $derived(classes.filter((item) => item.active === 1).sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999)));
+  const archivedClassCount = $derived(classes.filter((item) => item.active !== 1).length);
+  const filteredClasses = $derived(
+    classes
+      .filter((item) => (classFilter === 'active' ? item.active === 1 : item.active !== 1))
+      .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999)),
+  );
 
   onMount(loadAll);
 
@@ -279,7 +286,7 @@
   {:else if tab === 'staff'}
     <section>
       <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <label class="relative block sm:w-72"><span class="sr-only">Search staff</span><Search class="absolute top-3 left-3 text-apple-tertiary" size={16} /><input class="field-input pl-9" bind:value={search} placeholder="Search staff" /></label>
+        <label class="relative block sm:w-72"><span class="sr-only">Search staff</span><Search class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-apple-tertiary" size={16} /><input class="field-input pl-9!" type="search" enterkeyhint="search" autocomplete="off" bind:value={search} placeholder="Search staff" /></label>
         <button class="primary-button" type="button" onclick={() => openModal('staff')}><Plus size={17} /> Add staff member</button>
       </div>
       <div class="surface-card overflow-hidden p-0!">
@@ -301,7 +308,7 @@
   {:else if tab === 'students'}
     <section>
       <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <label class="relative block sm:w-72"><span class="sr-only">Search students</span><Search class="absolute top-3 left-3 text-apple-tertiary" size={16} /><input class="field-input pl-9" bind:value={search} placeholder="Name or admission number" /></label>
+        <label class="relative block sm:w-72"><span class="sr-only">Search students</span><Search class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-apple-tertiary" size={16} /><input class="field-input pl-9!" type="search" enterkeyhint="search" autocomplete="off" bind:value={search} placeholder="Name or admission number" /></label>
         <button class="primary-button" type="button" onclick={() => openModal('student')}><Plus size={17} /> Add student</button>
       </div>
       <div class="surface-card overflow-hidden p-0!">
@@ -318,12 +325,35 @@
     </section>
   {:else if tab === 'classes'}
     <section>
-      <div class="mb-4 flex items-center justify-between"><div><h2 class="section-title">Classes</h2><p class="mt-1 text-sm text-apple-secondary">Controls the order shown to teachers.</p></div><button class="primary-button" type="button" onclick={() => openModal('class')}><Plus size={17} /> Add class</button></div>
-      <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {#each [...classes].sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999)) as item}
-          <div class="surface-card p-4 {item.active !== 1 ? 'opacity-60' : ''}"><div class="flex items-start justify-between"><span class="grid size-11 place-items-center rounded-[14px] bg-apple-blue/10 font-bold text-apple-blue">{item.name.slice(0, 3)}</span><button class="icon-button" type="button" title={item.active === 1 ? 'Archive class' : 'Restore class'} onclick={() => toggleClass(item)}><MoreHorizontal size={18} /></button></div><h3 class="mt-4 text-lg font-bold">Class {item.name}</h3><p class="mt-1 text-xs text-apple-secondary">Sort order {item.sort_order ?? 'automatic'} · {item.active === 1 ? 'Active' : 'Archived'}</p></div>
-        {/each}
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-3"><div><h2 class="section-title">Classes</h2><p class="mt-1 text-sm text-apple-secondary">Controls the order shown to teachers.</p></div><button class="primary-button" type="button" onclick={() => openModal('class')}><Plus size={17} /> Add class</button></div>
+      <div class="segmented-control mb-4" role="tablist" aria-label="Class filter">
+        <button class:segment-active={classFilter === 'active'} class="segment" type="button" role="tab" aria-selected={classFilter === 'active'} onclick={() => classFilter = 'active'}>Active</button>
+        <button class:segment-active={classFilter === 'archived'} class="segment" type="button" role="tab" aria-selected={classFilter === 'archived'} onclick={() => classFilter = 'archived'}>Archived{#if archivedClassCount > 0}<span class="ml-1.5 rounded-full bg-apple-fill px-1.5 py-0.5 text-[0.62rem] font-bold text-apple-tertiary">{archivedClassCount}</span>{/if}</button>
       </div>
+      {#if filteredClasses.length === 0}
+        <div class="empty-card">
+          <GraduationCap class="text-apple-tertiary" size={26} />
+          <h3>{classFilter === 'active' ? 'No active classes' : 'No archived classes'}</h3>
+          <p>{classFilter === 'active' ? 'Add a class to start taking attendance registers.' : 'Classes you archive will appear here and can be restored at any time.'}</p>
+        </div>
+      {:else}
+        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {#each filteredClasses as item (item.id)}
+            <div class="surface-card p-4 {item.active !== 1 ? 'opacity-75' : ''}">
+              <div class="flex items-start justify-between">
+                <span class="grid size-11 place-items-center rounded-[14px] {item.active === 1 ? 'bg-apple-blue/10 text-apple-blue' : 'bg-apple-fill text-apple-tertiary'} font-bold">{item.name.slice(0, 3)}</span>
+                {#if item.active === 1}
+                  <button class="icon-button" type="button" title="Archive class" aria-label={`Archive class ${item.name}`} onclick={() => toggleClass(item)}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-[18px]"><path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" /></svg></button>
+                {:else}
+                  <button class="secondary-button h-9 px-3! text-xs text-apple-blue" type="button" onclick={() => toggleClass(item)}><ArchiveRestore size={15} /> Restore</button>
+                {/if}
+              </div>
+              <h3 class="mt-4 text-lg font-bold">Class {item.name}</h3>
+              <p class="mt-1 text-xs text-apple-secondary">Sort order {item.sort_order ?? 'automatic'} · {item.active === 1 ? 'Active' : 'Archived'}</p>
+            </div>
+          {/each}
+        </div>
+      {/if}
     </section>
   {:else if tab === 'subjects'}
     <section>
@@ -371,13 +401,13 @@
         <label><span class="field-label">Login name <span class="font-normal text-apple-tertiary">(optional)</span></span><input class="field-input" bind:value={formLogin} autocomplete="off" /></label>
         <div class="grid gap-4 {modal === 'staff' ? 'sm:grid-cols-2' : ''}">
           <label><span class="field-label">Role</span><span class="relative block"><select class="field-input appearance-none pr-9" bind:value={formRole}><option value="teacher">Teacher</option><option value="teacher_admin">Teacher admin</option>{#if bootstrap.user.role === 'super_admin'}<option value="super_admin">Super admin</option>{/if}</select><ChevronDown class="pointer-events-none absolute top-3.5 right-3 text-apple-tertiary" size={16} /></span></label>
-          {#if modal === 'staff'}<label><span class="field-label">6-digit PIN</span><input class="field-input tracking-[0.2em]" bind:value={formPin} type="password" inputmode="numeric" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" required /></label>{/if}
+          {#if modal === 'staff'}<label><span class="field-label">6-digit PIN</span><input class="field-input tracking-[0.2em]" bind:value={formPin} type="password" inputmode="numeric" enterkeyhint="done" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" required /></label>{/if}
         </div>
         <label><span class="field-label">Default subject <span class="font-normal text-apple-tertiary">(optional)</span></span><span class="relative block"><select class="field-input appearance-none pr-9" bind:value={formSubjectId}><option value="">{modal === 'staff' ? 'None' : 'Leave unchanged'}</option>{#each subjects.filter((item) => item.active === 1) as subject}<option value={subject.id}>{subject.name}</option>{/each}</select><ChevronDown class="pointer-events-none absolute top-3.5 right-3 text-apple-tertiary" size={16} /></span></label>
       {:else if modal === 'student'}
         <label><span class="field-label">Student name</span><input class="field-input" bind:value={formName} required /></label><label><span class="field-label">Admission number</span><input class="field-input" bind:value={formAdmission} required /></label>
       {:else if modal === 'class'}
-        <label><span class="field-label">Class name</span><input class="field-input" bind:value={formName} placeholder="e.g. 9C" required /></label><label><span class="field-label">Sort order <span class="font-normal text-apple-tertiary">(optional)</span></span><input class="field-input" bind:value={formSort} type="number" min="0" /></label>
+        <label><span class="field-label">Class name</span><input class="field-input" bind:value={formName} placeholder="e.g. 9C" required /></label><label><span class="field-label">Sort order <span class="font-normal text-apple-tertiary">(optional)</span></span><input class="field-input" bind:value={formSort} type="number" inputmode="numeric" min="0" /></label>
       {:else if modal === 'subject'}
         <label><span class="field-label">Subject name</span><input class="field-input" bind:value={formName} placeholder="e.g. Biology" required /></label>
       {:else if modal === 'enrollment'}
@@ -385,7 +415,7 @@
       {:else if modal === 'year'}
         <label><span class="field-label">Year name</span><input class="field-input" bind:value={formYearName} placeholder="e.g. 2027–2028" required /></label><div class="grid gap-4 sm:grid-cols-2"><label><span class="field-label">Starts on</span><input class="field-input" bind:value={formYearStart} type="date" required /></label><label><span class="field-label">Ends on</span><input class="field-input" bind:value={formYearEnd} type="date" required /></label></div><label class="flex items-center gap-3 rounded-xl bg-apple-bg p-3"><input class="size-4 accent-apple-blue" type="checkbox" bind:checked={formYearActive} /><span><strong class="block text-sm">Make this the active year</strong><small class="text-apple-secondary">This deactivates the current year.</small></span></label>
       {:else if modal === 'pin'}
-        <label><span class="field-label">New 6-digit PIN</span><input class="field-input tracking-[0.2em]" bind:value={formPin} type="password" inputmode="numeric" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" required /></label>
+        <label><span class="field-label">New 6-digit PIN</span><input class="field-input tracking-[0.2em]" bind:value={formPin} type="password" inputmode="numeric" enterkeyhint="done" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" required /></label>
       {/if}
 
       {#if error}<div class="flex items-start gap-2 rounded-xl bg-apple-red/[0.16] p-3 text-sm font-medium text-apple-red"><CircleAlert class="mt-0.5 shrink-0" size={17} />{error}</div>{/if}
