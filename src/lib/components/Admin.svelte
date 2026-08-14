@@ -222,21 +222,10 @@
   }
 
   async function toggleClass(item: SchoolClass) {
-    const makeActive = item.active !== 1;
     try {
-      await api.updateClass(item.id, { active: makeActive });
+      await api.updateClass(item.id, { active: item.active !== 1 });
       classes = await api.adminClasses();
-      const updated = classes.find((entry) => entry.id === item.id);
-      if (!updated) {
-        error = `The server no longer returns "${item.name}" from the class list after this change. It may exclude ${makeActive ? 'restored' : 'archived'} classes from GET /admin/classes.`;
-        return;
-      }
-      if ((updated.active === 1) !== makeActive) {
-        error = `The server accepted the update but "${item.name}" is still ${updated.active === 1 ? 'active' : 'archived'}. PUT /admin/classes may be ignoring "active: ${makeActive}".`;
-        return;
-      }
-      classFilter = makeActive ? 'active' : 'archived';
-      notify(makeActive ? 'Class restored' : 'Class archived');
+      notify(item.active === 1 ? 'Class archived' : 'Class restored');
     } catch (e) { error = errorMessage(e); }
   }
 
