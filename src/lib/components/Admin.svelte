@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import {
     BookOpen,
+    ArchiveRestore,
     CalendarRange,
     Check,
     ChevronDown,
@@ -10,7 +11,6 @@
     GraduationCap,
     KeyRound,
     LoaderCircle,
-    MoreHorizontal,
     Pencil,
     Plus,
     RefreshCw,
@@ -321,7 +321,7 @@
       <div class="mb-4 flex items-center justify-between"><div><h2 class="section-title">Classes</h2><p class="mt-1 text-sm text-apple-secondary">Controls the order shown to teachers.</p></div><button class="primary-button" type="button" onclick={() => openModal('class')}><Plus size={17} /> Add class</button></div>
       <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {#each [...classes].sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999)) as item}
-          <div class="surface-card p-4 {item.active !== 1 ? 'opacity-60' : ''}"><div class="flex items-start justify-between"><span class="grid size-11 place-items-center rounded-[14px] bg-apple-blue/10 font-bold text-apple-blue">{item.name.slice(0, 3)}</span><button class="icon-button" type="button" title={item.active === 1 ? 'Archive class' : 'Restore class'} onclick={() => toggleClass(item)}><MoreHorizontal size={18} /></button></div><h3 class="mt-4 text-lg font-bold">Class {item.name}</h3><p class="mt-1 text-xs text-apple-secondary">Sort order {item.sort_order ?? 'automatic'} · {item.active === 1 ? 'Active' : 'Archived'}</p></div>
+          <div class="surface-card p-4 {item.active !== 1 ? 'opacity-60' : ''}"><div class="flex items-start justify-between"><span class="grid size-11 place-items-center rounded-[14px] bg-apple-blue/10 font-bold text-apple-blue">{item.name.slice(0, 3)}</span><button class="icon-button" type="button" title={item.active === 1 ? 'Archive class' : 'Restore class'} aria-label={item.active === 1 ? `Archive class ${item.name}` : `Restore class ${item.name}`} onclick={() => toggleClass(item)}>{#if item.active === 1}<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-[18px]"><path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" /></svg>{:else}<ArchiveRestore size={18} />{/if}</button></div><h3 class="mt-4 text-lg font-bold">Class {item.name}</h3><p class="mt-1 text-xs text-apple-secondary">Sort order {item.sort_order ?? 'automatic'} · {item.active === 1 ? 'Active' : 'Archived'}</p></div>
         {/each}
       </div>
     </section>
