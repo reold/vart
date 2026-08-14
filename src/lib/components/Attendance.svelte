@@ -164,7 +164,8 @@
   }
 
   function setLateMinutes(id: string, event: Event) {
-    const value = Math.max(0, Number((event.currentTarget as HTMLInputElement).value) || 0);
+    const rawValue = Number((event.currentTarget as HTMLInputElement).value);
+    const value = Math.max(0, Math.trunc(Number.isFinite(rawValue) ? rawValue : 0));
     marks = { ...marks, [id]: { ...marks[id], late_minutes: value } };
   }
 
@@ -196,12 +197,14 @@
         subject_id: selectedSubjectId || null,
         session_date: draft.session_date,
         period_no: draft.period_no,
-        marks: markList.map(({ student_id, status, late_minutes, note }) => ({
-          student_id,
-          status,
-          late_minutes: status === 'late' ? (late_minutes ?? 0) : null,
-          note: note || null,
-        })),
+        marks: markList.map(({ student_id, status, late_minutes, note }) => {
+          const mark: MarkInput = { student_id, status };
+          if (status === 'late') {
+            mark.late_minutes = Math.max(0, Math.trunc(late_minutes ?? 0));
+          }
+          if (note?.trim()) mark.note = note.trim();
+          return mark;
+        }),
       });
       step = 'success';
       const day = await api.classToday(selectedClass.id).catch(() => null);
@@ -373,7 +376,7 @@
           </div>
           {#if mark.status === 'late'}
             <label class="mt-2 flex items-center justify-end gap-2 text-xs text-apple-secondary sm:mt-0">
-              <input class="h-9 w-16 rounded-lg border border-apple-separator bg-white px-2 text-center font-semibold outline-none focus:border-apple-blue focus:ring-2 focus:ring-apple-blue/15" type="number" min="0" max="300" value={mark.late_minutes ?? 0} oninput={(event) => setLateMinutes(mark.student_id, event)} aria-label={`Late minutes for ${mark.name}`} /> min
+              <input class="h-9 w-16 rounded-lg border border-apple-separator bg-white px-2 text-center font-semibold outline-none focus:border-apple-blue focus:ring-2 focus:ring-apple-blue/15" type="number" min="0" max="300" step="1" value={mark.late_minutes ?? 0} oninput={(event) => setLateMinutes(mark.student_id, event)} aria-label={`Late minutes for ${mark.name}`} /> min
             </label>
           {/if}
         </div>
