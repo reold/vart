@@ -119,6 +119,7 @@
             class="absolute h-px w-px overflow-hidden opacity-0"
             type="password"
             inputmode="numeric"
+            enterkeyhint="go"
             autocomplete="current-password"
             maxlength="6"
             value={pin}

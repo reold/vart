@@ -279,7 +279,7 @@
   {:else if tab === 'staff'}
     <section>
       <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <label class="relative block sm:w-72"><span class="sr-only">Search staff</span><Search class="absolute top-3 left-3 text-apple-tertiary" size={16} /><input class="field-input pl-9" bind:value={search} placeholder="Search staff" /></label>
+        <label class="relative block sm:w-72"><span class="sr-only">Search staff</span><Search class="absolute top-3 left-3 text-apple-tertiary" size={16} /><input class="field-input pl-9" type="search" enterkeyhint="search" autocomplete="off" bind:value={search} placeholder="Search staff" /></label>
         <button class="primary-button" type="button" onclick={() => openModal('staff')}><Plus size={17} /> Add staff member</button>
       </div>
       <div class="surface-card overflow-hidden p-0!">
@@ -301,7 +301,7 @@
   {:else if tab === 'students'}
     <section>
       <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <label class="relative block sm:w-72"><span class="sr-only">Search students</span><Search class="absolute top-3 left-3 text-apple-tertiary" size={16} /><input class="field-input pl-9" bind:value={search} placeholder="Name or admission number" /></label>
+        <label class="relative block sm:w-72"><span class="sr-only">Search students</span><Search class="absolute top-3 left-3 text-apple-tertiary" size={16} /><input class="field-input pl-9" type="search" enterkeyhint="search" autocomplete="off" bind:value={search} placeholder="Name or admission number" /></label>
         <button class="primary-button" type="button" onclick={() => openModal('student')}><Plus size={17} /> Add student</button>
       </div>
       <div class="surface-card overflow-hidden p-0!">
@@ -371,13 +371,13 @@
         <label><span class="field-label">Login name <span class="font-normal text-apple-tertiary">(optional)</span></span><input class="field-input" bind:value={formLogin} autocomplete="off" /></label>
         <div class="grid gap-4 {modal === 'staff' ? 'sm:grid-cols-2' : ''}">
           <label><span class="field-label">Role</span><span class="relative block"><select class="field-input appearance-none pr-9" bind:value={formRole}><option value="teacher">Teacher</option><option value="teacher_admin">Teacher admin</option>{#if bootstrap.user.role === 'super_admin'}<option value="super_admin">Super admin</option>{/if}</select><ChevronDown class="pointer-events-none absolute top-3.5 right-3 text-apple-tertiary" size={16} /></span></label>
-          {#if modal === 'staff'}<label><span class="field-label">6-digit PIN</span><input class="field-input tracking-[0.2em]" bind:value={formPin} type="password" inputmode="numeric" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" required /></label>{/if}
+          {#if modal === 'staff'}<label><span class="field-label">6-digit PIN</span><input class="field-input tracking-[0.2em]" bind:value={formPin} type="password" inputmode="numeric" enterkeyhint="done" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" required /></label>{/if}
         </div>
         <label><span class="field-label">Default subject <span class="font-normal text-apple-tertiary">(optional)</span></span><span class="relative block"><select class="field-input appearance-none pr-9" bind:value={formSubjectId}><option value="">{modal === 'staff' ? 'None' : 'Leave unchanged'}</option>{#each subjects.filter((item) => item.active === 1) as subject}<option value={subject.id}>{subject.name}</option>{/each}</select><ChevronDown class="pointer-events-none absolute top-3.5 right-3 text-apple-tertiary" size={16} /></span></label>
       {:else if modal === 'student'}
         <label><span class="field-label">Student name</span><input class="field-input" bind:value={formName} required /></label><label><span class="field-label">Admission number</span><input class="field-input" bind:value={formAdmission} required /></label>
       {:else if modal === 'class'}
-        <label><span class="field-label">Class name</span><input class="field-input" bind:value={formName} placeholder="e.g. 9C" required /></label><label><span class="field-label">Sort order <span class="font-normal text-apple-tertiary">(optional)</span></span><input class="field-input" bind:value={formSort} type="number" min="0" /></label>
+        <label><span class="field-label">Class name</span><input class="field-input" bind:value={formName} placeholder="e.g. 9C" required /></label><label><span class="field-label">Sort order <span class="font-normal text-apple-tertiary">(optional)</span></span><input class="field-input" bind:value={formSort} type="number" inputmode="numeric" min="0" /></label>
       {:else if modal === 'subject'}
         <label><span class="field-label">Subject name</span><input class="field-input" bind:value={formName} placeholder="e.g. Biology" required /></label>
       {:else if modal === 'enrollment'}
@@ -385,7 +385,7 @@
       {:else if modal === 'year'}
         <label><span class="field-label">Year name</span><input class="field-input" bind:value={formYearName} placeholder="e.g. 2027–2028" required /></label><div class="grid gap-4 sm:grid-cols-2"><label><span class="field-label">Starts on</span><input class="field-input" bind:value={formYearStart} type="date" required /></label><label><span class="field-label">Ends on</span><input class="field-input" bind:value={formYearEnd} type="date" required /></label></div><label class="flex items-center gap-3 rounded-xl bg-apple-bg p-3"><input class="size-4 accent-apple-blue" type="checkbox" bind:checked={formYearActive} /><span><strong class="block text-sm">Make this the active year</strong><small class="text-apple-secondary">This deactivates the current year.</small></span></label>
       {:else if modal === 'pin'}
-        <label><span class="field-label">New 6-digit PIN</span><input class="field-input tracking-[0.2em]" bind:value={formPin} type="password" inputmode="numeric" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" required /></label>
+        <label><span class="field-label">New 6-digit PIN</span><input class="field-input tracking-[0.2em]" bind:value={formPin} type="password" inputmode="numeric" enterkeyhint="done" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" required /></label>
       {/if}
 
       {#if error}<div class="flex items-start gap-2 rounded-xl bg-apple-red/[0.16] p-3 text-sm font-medium text-apple-red"><CircleAlert class="mt-0.5 shrink-0" size={17} />{error}</div>{/if}

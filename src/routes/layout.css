@@ -37,6 +37,13 @@ html {
   min-width: 320px;
   background: var(--color-apple-bg);
   scroll-behavior: smooth;
+  /* Kill double-tap-to-zoom and pinch-zoom for an app-like feel (scrolling still works). */
+  touch-action: pan-x pan-y;
+  /* Stop iOS/Android font inflation when rotating to landscape. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Block pull-to-refresh and rubber-band scroll chaining at the page edge. */
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -44,6 +51,25 @@ body {
   min-width: 320px;
   min-height: 100dvh;
   background: var(--color-apple-bg);
+  overscroll-behavior-y: none;
+  /* Keep content clear of the notch/home indicator in landscape (viewport-fit=cover). */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Prevent long-press text selection + iOS callout sheet on controls (content stays selectable). */
+button,
+summary,
+.nav-item,
+.mobile-nav-item,
+.tab-button,
+.status-button,
+.keypad-button,
+.student-picker,
+.quick-action {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 button,
@@ -170,9 +196,11 @@ select {
   box-shadow: 0 2px 8px rgba(10, 132, 255, 0.3);
 }
 
-.primary-button:not(:disabled):hover {
-  background: #409cff;
-  box-shadow: 0 4px 12px rgba(10, 132, 255, 0.2);
+@media (hover: hover) {
+  .primary-button:not(:disabled):hover {
+    background: #409cff;
+    box-shadow: 0 4px 12px rgba(10, 132, 255, 0.2);
+  }
 }
 
 .primary-button:not(:disabled):active,
@@ -187,9 +215,11 @@ select {
   color: var(--color-apple-label);
 }
 
-.secondary-button:not(:disabled):hover {
-  border-color: #636366;
-  background: var(--color-apple-surface-raised);
+@media (hover: hover) {
+  .secondary-button:not(:disabled):hover {
+    border-color: #636366;
+    background: var(--color-apple-surface-raised);
+  }
 }
 
 .primary-button:focus-visible,
@@ -216,9 +246,11 @@ select {
   transition: transform 120ms ease, color 120ms ease, background 120ms ease;
 }
 
-.icon-button:hover {
-  background: var(--color-apple-surface-raised);
-  color: var(--color-apple-label);
+@media (hover: hover) {
+  .icon-button:hover {
+    background: var(--color-apple-surface-raised);
+    color: var(--color-apple-label);
+  }
 }
 
 .back-button {
@@ -232,8 +264,10 @@ select {
   outline: none;
 }
 
-.back-button:hover {
-  color: #409cff;
+@media (hover: hover) {
+  .back-button:hover {
+    color: #409cff;
+  }
 }
 
 .field-label {
@@ -284,9 +318,11 @@ select {
   transition: color 120ms ease, background 120ms ease;
 }
 
-.nav-item:hover {
-  background: var(--color-apple-surface-raised);
-  color: var(--color-apple-label);
+@media (hover: hover) {
+  .nav-item:hover {
+    background: var(--color-apple-surface-raised);
+    color: var(--color-apple-label);
+  }
 }
 
 .nav-active {
@@ -324,8 +360,10 @@ select {
   transition: background 120ms ease;
 }
 
-.quick-action:hover {
-  background: var(--color-apple-surface-raised);
+@media (hover: hover) {
+  .quick-action:hover {
+    background: var(--color-apple-surface-raised);
+  }
 }
 
 .quick-action > span:nth-child(2) > span {
@@ -470,8 +508,10 @@ select {
   transition: border 120ms ease, color 120ms ease;
 }
 
-.tab-button:hover {
-  color: var(--color-apple-label);
+@media (hover: hover) {
+  .tab-button:hover {
+    color: var(--color-apple-label);
+  }
 }
 
 .tab-active {
@@ -575,8 +615,10 @@ select {
   transition: background 100ms ease;
 }
 
-.student-picker:hover {
-  background: var(--color-apple-surface-raised);
+@media (hover: hover) {
+  .student-picker:hover {
+    background: var(--color-apple-surface-raised);
+  }
 }
 
 .student-picker strong,
@@ -639,8 +681,10 @@ select {
   transition: transform 80ms ease, background 80ms ease;
 }
 
-.keypad-button:hover {
-  background: #3a3a3c;
+@media (hover: hover) {
+  .keypad-button:hover {
+    background: #3a3a3c;
+  }
 }
 
 .keypad-button:active {
@@ -686,6 +730,53 @@ input:-webkit-autofill:focus {
   border: 3px solid var(--color-apple-bg);
   border-radius: 999px;
   background: #636366;
+}
+
+/* Hide number input spinner arrows — too small to be usable on mobile, noisy on desktop. */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+/* Remove the extra clear/decoration buttons WebKit injects into search inputs. */
+input[type='search']::-webkit-search-decoration,
+input[type='search']::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+/* Touch devices: 16px minimum input font so iOS WebKit never auto-zooms on focus,
+   and comfortable 44px tap targets per Apple HIG. */
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea,
+  .field-input {
+    font-size: 16px;
+  }
+
+  .field-input {
+    min-height: 2.9rem;
+  }
+
+  .status-button {
+    min-height: 2.75rem;
+    font-size: 0.8rem;
+  }
+
+  .icon-button {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .tab-button {
+    min-height: 3rem;
+  }
 }
 
 @media (prefers-contrast: more) {

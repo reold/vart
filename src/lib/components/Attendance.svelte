@@ -376,7 +376,7 @@
           </div>
           {#if mark.status === 'late'}
             <label class="mt-2 flex items-center justify-end gap-2 text-xs text-apple-secondary sm:mt-0">
-              <input class="h-9 w-16 rounded-lg border border-apple-separator bg-apple-surface px-2 text-center font-semibold outline-none focus:border-apple-blue focus:ring-2 focus:ring-apple-blue/15" type="number" min="0" max="300" step="1" value={mark.late_minutes ?? 0} oninput={(event) => setLateMinutes(mark.student_id, event)} aria-label={`Late minutes for ${mark.name}`} /> min
+              <input class="h-9 w-16 rounded-lg border border-apple-separator bg-apple-surface px-2 text-center font-semibold outline-none focus:border-apple-blue focus:ring-2 focus:ring-apple-blue/15" type="number" inputmode="numeric" enterkeyhint="done" min="0" max="300" step="1" value={mark.late_minutes ?? 0} oninput={(event) => setLateMinutes(mark.student_id, event)} aria-label={`Late minutes for ${mark.name}`} /> min
             </label>
           {/if}
         </div>
