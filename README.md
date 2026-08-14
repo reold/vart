@@ -1,42 +1,67 @@
-# sv
+# VART frontend
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A mobile-first school attendance frontend for the [VART Worker API](https://vart.reold.workers.dev/docs). Built with SvelteKit 5, Tailwind CSS 4, TypeScript and the static adapter.
 
-## Creating a project
+## Included flows
 
-If you're seeing this, you've probably already done this step. Congrats!
+- First-run administrator setup
+- Tap-your-name login with a six-digit PIN
+- Teacher dashboard with seven-period class progress
+- Copy-previous-period attendance, including the collapsed “absent earlier” flow
+- Full-snapshot attendance submission with present, absent and late marks
+- Class-day, per-student and low-attendance reports
+- Role-gated management for staff, students, classes, subjects, enrollments and academic years
+- Responsive desktop sidebar and mobile tab bar
 
-```sh
-# create a new project
-npx sv create my-app
-```
+The UI intentionally hides administration from plain teachers even though some current `/admin/*` handlers only require authentication. It never renders or logs the PIN hash/salt fields returned by the staff endpoint.
 
-To recreate this project with the same configuration:
+## Local development
 
-```sh
-# recreate this project
-bun x sv@0.16.6 create --template minimal --types ts --add tailwindcss="plugins:none" --install bun frontend
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+```bash
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Open <http://localhost:5173>. Vite proxies all API paths to `https://vart.reold.workers.dev`, so the browser sees a same-origin session and avoids CORS/SameSite problems.
 
-To create a production version of your app:
+To use a local Worker instead:
 
-```sh
+```bash
+VITE_API_TARGET=http://localhost:8787 npm run dev
+```
+
+Useful checks:
+
+```bash
+npm run check
 npm run build
+npm run preview
 ```
 
-You can preview the production build with `npm run preview`.
+## Configuration
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+| Variable | Purpose | Default |
+|---|---|---|
+| `VITE_API_TARGET` | Server target for the local Vite proxy | `https://vart.reold.workers.dev` |
+| `VITE_API_URL` | Browser-facing API origin in a static production build | `https://vart.reold.workers.dev` |
+| `BASE_PATH` | SvelteKit asset base, such as `/vart` on GitHub Pages | empty |
+
+See `.env.example` for a starting point.
+
+## GitHub Pages
+
+The workflow in `.github/workflows/deploy.yml` builds the static app at `/vart` and points it at the deployed Worker.
+
+There is one backend requirement for authenticated requests from GitHub Pages: the frontend origin must be in the Worker’s `ALLOWED_ORIGINS`, and the session cookie must be cross-site compatible (`SameSite=None; Secure`). The API currently documents `SameSite=Lax`; browsers will not attach that cookie to fetches from `reold.github.io`, even when CORS is configured correctly. Frontend code cannot bypass an HttpOnly SameSite cookie.
+
+For the current `SameSite=Lax` backend, serve the built app and API through one origin (the preferred deployment), or update the Worker cookie to `SameSite=None; Secure` and allow `https://reold.github.io`. Local development already works through the included same-origin Vite proxy.
+
+## API behavior represented in the UI
+
+- Attendance submission always sends a mark for every rostered student.
+- Existing attendance for today can be reviewed and overwritten.
+- Dates use the server’s UTC day.
+- Inferred report statuses are visually faded and outlined.
+- Raw day reports are clearly identified as non-inferred.
+- Student records are deactivated instead of deleted to preserve attendance history.
+- Only administrator roles can access school management screens.
