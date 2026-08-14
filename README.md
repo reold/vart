@@ -51,9 +51,9 @@ See `.env.example` for a starting point.
 
 The workflow in `.github/workflows/deploy.yml` builds the static app at `/vart` and points it at the deployed Worker.
 
-The Worker must include the localhost and GitHub Pages origins in `ALLOWED_ORIGINS` and allow the `Authorization` request header. The frontend uses the session bearer token returned by `POST /auth/login`, stores it in browser local storage, and sends it on later requests. Logout revokes the server session and removes the stored token.
+The Worker must include the localhost and GitHub Pages origins in `ALLOWED_ORIGINS` and allow the `Authorization` request header. For cross-site deployments, the frontend stores the session bearer token returned by `POST /auth/login` in `sessionStorage` and sends it on later requests. It deliberately omits cookie credentials. Logout revokes the server session and removes the stored token.
 
-This bearer flow is the API’s documented fallback for cross-site frontends. It avoids third-party-cookie and `SameSite` restrictions on GitHub Pages, Safari and iOS. A future same-origin deployment should prefer the API’s HttpOnly cookie because it keeps the session token unavailable to JavaScript.
+This bearer flow is the API’s documented fallback for cross-site frontends. It avoids third-party-cookie and `SameSite` restrictions on GitHub Pages, Safari and iOS, while clearing the browser copy when the tab closes. A same-origin deployment automatically prefers the API’s HttpOnly cookie because it keeps the session token unavailable to JavaScript.
 
 ## API behavior represented in the UI
 

@@ -30,23 +30,44 @@ export const API_BASE = configuredBase ?? 'https://vart.reold.workers.dev';
 const SESSION_TOKEN_KEY = `vart.session:${API_BASE}`;
 let memorySessionToken: string | null = null;
 
+function isCrossOriginApi(): boolean {
+  if (typeof window === 'undefined') return Boolean(API_BASE);
+  return new URL(API_BASE || window.location.origin, window.location.origin).origin !== window.location.origin;
+}
+
 function getSessionToken(): string | null {
   if (typeof window === 'undefined') return memorySessionToken;
   try {
-    return window.localStorage.getItem(SESSION_TOKEN_KEY) ?? memorySessionToken;
+    const token = window.sessionStorage.getItem(SESSION_TOKEN_KEY);
+    if (token) return token;
+
+    // Migrate tokens saved by the earlier client, then remove the persistent copy.
+    const legacyToken = window.localStorage.getItem(SESSION_TOKEN_KEY);
+    if (legacyToken) {
+      window.sessionStorage.setItem(SESSION_TOKEN_KEY, legacyToken);
+      window.localStorage.removeItem(SESSION_TOKEN_KEY);
+      memorySessionToken = legacyToken;
+      return legacyToken;
+    }
   } catch {
-    return memorySessionToken;
+    // Memory storage keeps the current tab usable when browser storage is blocked.
   }
+  return memorySessionToken;
 }
 
 function setSessionToken(token: string | null) {
   memorySessionToken = token;
   if (typeof window === 'undefined') return;
   try {
-    if (token) window.localStorage.setItem(SESSION_TOKEN_KEY, token);
-    else window.localStorage.removeItem(SESSION_TOKEN_KEY);
+    if (token) window.sessionStorage.setItem(SESSION_TOKEN_KEY, token);
+    else window.sessionStorage.removeItem(SESSION_TOKEN_KEY);
   } catch {
     // Memory storage still keeps the current tab signed in when storage is blocked.
+  }
+  try {
+    window.localStorage.removeItem(SESSION_TOKEN_KEY);
+  } catch {
+    // Ignore storage cleanup failures.
   }
 }
 
@@ -65,7 +86,7 @@ export class ApiError extends Error {
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers);
   headers.set('Accept', 'application/json');
-  const sessionToken = getSessionToken();
+  const sessionToken = isCrossOriginApi() ? getSessionToken() : null;
   if (sessionToken && !headers.has('Authorization')) {
     headers.set('Authorization', `Bearer ${sessionToken}`);
   }
@@ -78,7 +99,8 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     response = await fetch(`${API_BASE}${path}`, {
       ...options,
       headers,
-      credentials: 'include',
+      // Cross-site deployments use the bearer token and deliberately avoid cookies.
+      credentials: isCrossOriginApi() ? 'omit' : 'include',
     });
   } catch {
     throw new ApiError(
@@ -124,7 +146,7 @@ export const api = {
       token_type?: 'Bearer';
       expires_in?: number;
     }>('/auth/login', json('POST', { user_id, pin }));
-    setSessionToken(result.token ?? null);
+    setSessionToken(isCrossOriginApi() ? (result.token ?? null) : null);
     return result;
   },
   logout: async () => {
