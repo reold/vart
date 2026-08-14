@@ -11,6 +11,7 @@ A mobile-first school attendance frontend for the [VART Worker API](https://vart
 - Full-snapshot attendance submission with present, absent and late marks
 - Class-day, per-student and low-attendance reports
 - Role-gated management for staff, students, classes, subjects, enrollments and academic years
+- Dark-only, high-contrast Apple color system tuned for outdoor legibility
 - Responsive desktop sidebar and mobile tab bar
 
 The UI intentionally hides administration from plain teachers even though some current `/admin/*` handlers only require authentication. It never renders or logs the PIN hash/salt fields returned by the staff endpoint.

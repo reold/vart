@@ -99,7 +99,7 @@
 {#if mode === 'loading'}
   <div class="grid min-h-dvh place-items-center bg-apple-bg">
     <div class="text-center">
-      <span class="mx-auto grid size-14 place-items-center rounded-[18px] bg-apple-blue text-white shadow-lg shadow-apple-blue/20"><GraduationCap size={29} /></span>
+      <span class="mx-auto grid size-14 place-items-center rounded-[18px] bg-apple-blue text-black shadow-lg shadow-apple-blue/20"><GraduationCap size={29} /></span>
       <LoaderCircle class="mx-auto mt-6 animate-spin text-apple-blue" size={24} />
       <p class="mt-3 text-sm font-medium text-apple-secondary">Opening VART…</p>
     </div>
@@ -110,8 +110,8 @@
   <Setup onAuthenticated={startApp} />
 {:else if mode === 'error'}
   <div class="grid min-h-dvh place-items-center bg-apple-bg px-4">
-    <div class="w-full max-w-md rounded-3xl bg-white p-7 text-center shadow-xl shadow-black/[0.05] ring-1 ring-black/[0.04]">
-      <span class="mx-auto grid size-14 place-items-center rounded-2xl bg-apple-red/[0.09] text-apple-red"><CircleAlert size={28} /></span>
+    <div class="w-full max-w-md rounded-3xl bg-apple-surface p-7 text-center shadow-xl shadow-black/[0.05] ring-1 ring-white/10">
+      <span class="mx-auto grid size-14 place-items-center rounded-2xl bg-apple-red/[0.18] text-apple-red"><CircleAlert size={28} /></span>
       <h1 class="mt-5 text-xl font-bold tracking-tight">Couldn’t open your workspace</h1>
       <p class="mt-2 text-sm leading-6 text-apple-secondary">{appError}</p>
       <div class="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">

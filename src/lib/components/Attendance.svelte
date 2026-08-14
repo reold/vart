@@ -285,7 +285,7 @@
           {@const isDone = period.status === 'submitted'}
           {@const isNext = suggestedPeriod === period.period_no}
           <button class="group flex w-full items-center gap-4 border-b border-apple-separator p-4 text-left transition last:border-0 hover:bg-apple-bg/70 sm:p-5" type="button" onclick={() => openPeriod(period.period_no)}>
-            <span class="grid size-11 shrink-0 place-items-center rounded-[14px] {isDone ? 'bg-apple-green/10 text-apple-green' : isNext ? 'bg-apple-blue text-white' : 'bg-apple-bg text-apple-secondary'}">
+            <span class="grid size-11 shrink-0 place-items-center rounded-[14px] {isDone ? 'bg-apple-green/10 text-apple-green' : isNext ? 'bg-apple-blue text-black' : 'bg-apple-bg text-apple-secondary'}">
               {#if isDone}<Check size={21} strokeWidth={2.5} />{:else}<span class="font-bold">{period.period_no}</span>{/if}
             </span>
             <span class="min-w-0 flex-1">
@@ -317,7 +317,7 @@
       </div>
     </header>
 
-    <section class="sticky top-16 z-20 -mx-4 mb-4 border-y border-apple-separator bg-white/92 px-4 py-3 backdrop-blur-xl sm:mx-0 sm:rounded-2xl sm:border lg:top-3">
+    <section class="sticky top-16 z-20 -mx-4 mb-4 border-y border-apple-separator bg-apple-surface/96 px-4 py-3 backdrop-blur-xl sm:mx-0 sm:rounded-2xl sm:border lg:top-3">
       <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
         <div class="flex flex-1 items-center gap-4 sm:flex-none">
           <div><p class="text-xl font-bold tabular-nums text-apple-green">{presentCount}</p><p class="text-[10px] font-bold tracking-wide text-apple-tertiary uppercase">Present</p></div>
@@ -349,7 +349,7 @@
           <ChevronDown class={`text-apple-secondary transition ${showEarlier ? 'rotate-180' : ''}`} size={18} />
         </button>
         {#if showEarlier}
-          <div class="border-t border-apple-red/10 bg-white/60 px-3">
+          <div class="border-t border-apple-red/10 bg-apple-surface/85 px-3">
             {#each earlierAbsent as mark}
               <div class="flex items-center gap-3 border-b border-apple-separator/70 py-3 last:border-0">
                 <span class="student-avatar bg-apple-red/10 text-apple-red">{mark.name.slice(0, 1)}</span>
@@ -376,14 +376,14 @@
           </div>
           {#if mark.status === 'late'}
             <label class="mt-2 flex items-center justify-end gap-2 text-xs text-apple-secondary sm:mt-0">
-              <input class="h-9 w-16 rounded-lg border border-apple-separator bg-white px-2 text-center font-semibold outline-none focus:border-apple-blue focus:ring-2 focus:ring-apple-blue/15" type="number" min="0" max="300" step="1" value={mark.late_minutes ?? 0} oninput={(event) => setLateMinutes(mark.student_id, event)} aria-label={`Late minutes for ${mark.name}`} /> min
+              <input class="h-9 w-16 rounded-lg border border-apple-separator bg-apple-surface px-2 text-center font-semibold outline-none focus:border-apple-blue focus:ring-2 focus:ring-apple-blue/15" type="number" min="0" max="300" step="1" value={mark.late_minutes ?? 0} oninput={(event) => setLateMinutes(mark.student_id, event)} aria-label={`Late minutes for ${mark.name}`} /> min
             </label>
           {/if}
         </div>
       {/each}
     </div>
 
-    <div class="sticky bottom-[72px] z-20 -mx-4 mt-5 border-t border-apple-separator bg-white/94 px-4 py-3 backdrop-blur-xl sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 lg:bottom-0">
+    <div class="sticky bottom-[72px] z-20 -mx-4 mt-5 border-t border-apple-separator bg-apple-surface/96 px-4 py-3 backdrop-blur-xl sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 lg:bottom-0">
       <button class="primary-button h-12 w-full sm:ml-auto sm:flex sm:w-auto sm:min-w-48" type="button" onclick={submit} disabled={submitting || markList.length === 0}>
         {#if submitting}<LoaderCircle class="animate-spin" size={18} />{:else}<Save size={18} />{/if}
         {submitting ? 'Submitting…' : `Submit period ${draft.period_no}`}
@@ -396,7 +396,7 @@
         <p class="mt-6 text-sm font-semibold text-apple-green">Attendance saved</p>
         <h1 class="mt-1 text-[32px] font-bold tracking-[-0.04em]">Period {result.summary.period_no} is complete</h1>
         <p class="mt-2 text-[15px] text-apple-secondary">Class {selectedClass?.name} · {formatServerDate(result.summary.session_date)}</p>
-        <div class="mt-7 grid grid-cols-3 overflow-hidden rounded-2xl border border-apple-separator bg-white shadow-sm">
+        <div class="mt-7 grid grid-cols-3 overflow-hidden rounded-2xl border border-apple-separator bg-apple-surface shadow-sm">
           <div class="p-4"><p class="text-2xl font-bold text-apple-green">{result.summary.present_count}</p><p class="mt-1 text-xs text-apple-secondary">Present</p></div>
           <div class="border-x border-apple-separator p-4"><p class="text-2xl font-bold text-apple-red">{result.summary.absent_count}</p><p class="mt-1 text-xs text-apple-secondary">Absent</p></div>
           <div class="p-4"><p class="text-2xl font-bold text-apple-orange">{result.summary.late_count}</p><p class="mt-1 text-xs text-apple-secondary">Late</p></div>

@@ -40,9 +40,9 @@
 </script>
 
 <div class="min-h-dvh bg-apple-bg text-apple-label lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
-  <aside class="sticky top-0 hidden h-dvh flex-col border-r border-apple-separator bg-white px-3 py-5 lg:flex">
+  <aside class="sticky top-0 hidden h-dvh flex-col border-r border-apple-separator bg-apple-surface px-3 py-5 lg:flex">
     <div class="flex items-center gap-3 px-3 pb-7">
-      <div class="grid size-10 place-items-center rounded-[13px] bg-apple-blue text-white shadow-sm shadow-apple-blue/20">
+      <div class="grid size-10 place-items-center rounded-[13px] bg-apple-blue text-black shadow-sm shadow-apple-blue/20">
         <GraduationCap size={23} strokeWidth={2.2} />
       </div>
       <div>
@@ -95,9 +95,9 @@
   </aside>
 
   <div class="min-w-0">
-    <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-apple-separator/80 bg-white/90 px-4 backdrop-blur-xl lg:hidden">
+    <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-apple-separator/80 bg-apple-surface/96 px-4 backdrop-blur-xl lg:hidden">
       <button class="flex items-center gap-2" type="button" onclick={() => onNavigate('home')} aria-label="Go to overview">
-        <span class="grid size-8 place-items-center rounded-[10px] bg-apple-blue text-white">
+        <span class="grid size-8 place-items-center rounded-[10px] bg-apple-blue text-black">
           <GraduationCap size={19} />
         </span>
         <span class="font-bold tracking-tight">VART</span>
@@ -115,7 +115,7 @@
     </main>
   </div>
 
-  <nav class="fixed inset-x-0 bottom-0 z-40 border-t border-apple-separator bg-white/92 px-[max(0.75rem,env(safe-area-inset-left))] pt-1.5 pb-[max(0.4rem,env(safe-area-inset-bottom))] backdrop-blur-xl lg:hidden" aria-label="Mobile navigation">
+  <nav class="fixed inset-x-0 bottom-0 z-40 border-t border-apple-separator bg-apple-surface/96 px-[max(0.75rem,env(safe-area-inset-left))] pt-1.5 pb-[max(0.4rem,env(safe-area-inset-bottom))] backdrop-blur-xl lg:hidden" aria-label="Mobile navigation">
     <div class="mx-auto grid max-w-md grid-cols-4">
       {#each primaryNav as item}
         {@const Icon = item.icon}

@@ -183,7 +183,7 @@
                 <thead><tr><th class="sticky left-0 z-10 min-w-52 bg-apple-bg! text-left!">Student</th>{#each Array(7) as _, index}<th>P{index + 1}</th>{/each}</tr></thead>
                 <tbody>
                   {#each dayStudents as student}
-                    <tr><td class="sticky left-0 z-10 bg-white"><strong>{student.name}</strong><small>{student.roll ? `Roll ${student.roll} · ` : ''}{student.admission}</small></td>{#each Array(7) as _, index}{@const status = markFor(student.id, index + 1)}<td><span title={statusTitle(status)} class="report-status status-{status ?? 'none'}">{statusLetter(status)}</span></td>{/each}</tr>
+                    <tr><td class="sticky left-0 z-10 bg-apple-surface"><strong>{student.name}</strong><small>{student.roll ? `Roll ${student.roll} · ` : ''}{student.admission}</small></td>{#each Array(7) as _, index}{@const status = markFor(student.id, index + 1)}<td><span title={statusTitle(status)} class="report-status status-{status ?? 'none'}">{statusLetter(status)}</span></td>{/each}</tr>
                   {/each}
                 </tbody>
               </table>
@@ -213,10 +213,10 @@
           <div class="mb-5 overflow-hidden rounded-2xl bg-[#071B33] p-5 text-white sm:p-6">
             <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
               <span class="grid size-14 place-items-center rounded-2xl bg-white/10 text-xl font-bold">{studentReport.student.name.slice(0, 1)}</span>
-              <div class="min-w-0 flex-1"><h2 class="truncate text-xl font-bold">{studentReport.student.name}</h2><p class="mt-1 text-xs text-white/55">{studentReport.student.class_name ? `Class ${studentReport.student.class_name} · ` : ''}{studentReport.student.roll_no ? `Roll ${studentReport.student.roll_no} · ` : ''}{studentReport.student.admission_no}</p></div>
-              <div class="sm:text-right"><p class="text-3xl font-bold {percentColor(studentReport.attendance_percentage)}">{studentReport.attendance_percentage.toFixed(1)}%</p><p class="mt-1 text-xs text-white/50">year attendance</p></div>
+              <div class="min-w-0 flex-1"><h2 class="truncate text-xl font-bold">{studentReport.student.name}</h2><p class="mt-1 text-xs text-white/75">{studentReport.student.class_name ? `Class ${studentReport.student.class_name} · ` : ''}{studentReport.student.roll_no ? `Roll ${studentReport.student.roll_no} · ` : ''}{studentReport.student.admission_no}</p></div>
+              <div class="sm:text-right"><p class="text-3xl font-bold {percentColor(studentReport.attendance_percentage)}">{studentReport.attendance_percentage.toFixed(1)}%</p><p class="mt-1 text-xs text-white/80">year attendance</p></div>
             </div>
-            <div class="mt-6 grid grid-cols-3 border-t border-white/10 pt-5 text-center sm:text-left"><div><p class="font-bold">{studentReport.total_days}</p><p class="text-xs text-white/50">school days</p></div><div><p class="font-bold">{studentReport.total_credit.toFixed(1)}</p><p class="text-xs text-white/50">credits earned</p></div><div><p class="font-bold">{studentReport.total_denominator}</p><p class="text-xs text-white/50">period total</p></div></div>
+            <div class="mt-6 grid grid-cols-3 border-t border-white/10 pt-5 text-center sm:text-left"><div><p class="font-bold">{studentReport.total_days}</p><p class="text-xs text-white/80">school days</p></div><div><p class="font-bold">{studentReport.total_credit.toFixed(1)}</p><p class="text-xs text-white/80">credits earned</p></div><div><p class="font-bold">{studentReport.total_denominator}</p><p class="text-xs text-white/80">period total</p></div></div>
           </div>
 
           <div class="surface-card overflow-hidden p-0!">

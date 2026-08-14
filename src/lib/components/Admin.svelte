@@ -258,7 +258,7 @@
   </header>
 
   {#if toast}
-    <div class="fixed top-4 left-1/2 z-[70] flex -translate-x-1/2 items-center gap-2 rounded-full bg-[#1c1c1e] px-4 py-2.5 text-sm font-semibold whitespace-nowrap text-white shadow-xl" role="status"><CircleCheck class="text-apple-green" size={17} />{toast}</div>
+    <div class="fixed top-4 left-1/2 z-[70] flex -translate-x-1/2 items-center gap-2 rounded-full bg-apple-label px-4 py-2.5 text-sm font-semibold whitespace-nowrap text-apple-bg shadow-xl" role="status"><CircleCheck class="text-apple-green" size={17} />{toast}</div>
   {/if}
 
   {#if error}<div class="error-banner mb-5"><CircleAlert size={18} /><span>{error}</span><button type="button" onclick={() => error = ''}>Dismiss</button></div>{/if}
@@ -388,7 +388,7 @@
         <label><span class="field-label">New 6-digit PIN</span><input class="field-input tracking-[0.2em]" bind:value={formPin} type="password" inputmode="numeric" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" required /></label>
       {/if}
 
-      {#if error}<div class="flex items-start gap-2 rounded-xl bg-apple-red/[0.08] p-3 text-sm font-medium text-apple-red"><CircleAlert class="mt-0.5 shrink-0" size={17} />{error}</div>{/if}
+      {#if error}<div class="flex items-start gap-2 rounded-xl bg-apple-red/[0.16] p-3 text-sm font-medium text-apple-red"><CircleAlert class="mt-0.5 shrink-0" size={17} />{error}</div>{/if}
       <div class="flex justify-end gap-2 pt-2"><button class="secondary-button" type="button" onclick={() => { modal = null; error = ''; }}>Cancel</button><button class="primary-button" type="submit" disabled={saving}>{#if saving}<LoaderCircle class="animate-spin" size={17} />{/if}{saving ? 'Saving…' : modal === 'pin' ? 'Reset PIN' : 'Save'}</button></div>
     </form>
   </Modal>

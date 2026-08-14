@@ -48,14 +48,14 @@
 <svelte:head><title>Set up VART</title></svelte:head>
 
 <div class="min-h-dvh bg-apple-bg px-4 py-8 sm:grid sm:place-items-center sm:py-12">
-  <main class="mx-auto w-full max-w-[560px] overflow-hidden rounded-[28px] bg-white shadow-xl shadow-black/[0.06] ring-1 ring-black/[0.04]">
+  <main class="mx-auto w-full max-w-[560px] overflow-hidden rounded-[28px] bg-apple-surface shadow-xl shadow-black/[0.06] ring-1 ring-white/10">
     <div class="bg-[#071B33] px-6 py-8 text-white sm:px-10">
       <div class="flex items-center justify-between">
-        <span class="grid size-11 place-items-center rounded-[14px] bg-apple-blue"><GraduationCap size={25} /></span>
-        <span class="rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wider text-white/70 uppercase">First-time setup</span>
+        <span class="grid size-11 place-items-center rounded-[14px] bg-apple-blue text-black"><GraduationCap size={25} /></span>
+        <span class="rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wider text-white/80 uppercase">First-time setup</span>
       </div>
       <h1 class="mt-8 text-[30px] leading-tight font-bold tracking-[-0.035em]">Welcome to VART</h1>
-      <p class="mt-2 max-w-md text-sm leading-6 text-white/65">Create the first administrator. We’ll also create and activate the current June–May academic year.</p>
+      <p class="mt-2 max-w-md text-sm leading-6 text-white/80">Create the first administrator. We’ll also create and activate the current June–May academic year.</p>
     </div>
 
     <form class="space-y-5 px-6 py-8 sm:px-10" onsubmit={(event) => { event.preventDefault(); void submit(); }}>
@@ -79,12 +79,12 @@
       </div>
 
       {#if error}
-        <div class="flex items-start gap-2 rounded-xl bg-apple-red/[0.08] p-3 text-sm font-medium text-apple-red" role="alert">
+        <div class="flex items-start gap-2 rounded-xl bg-apple-red/[0.16] p-3 text-sm font-medium text-apple-red" role="alert">
           <CircleAlert class="mt-0.5 shrink-0" size={17} /> {error}
         </div>
       {/if}
 
-      <div class="flex items-start gap-3 rounded-2xl bg-apple-green/[0.08] p-4">
+      <div class="flex items-start gap-3 rounded-2xl bg-apple-green/[0.14] p-4">
         <ShieldCheck class="mt-0.5 shrink-0 text-apple-green" size={19} />
         <p class="text-xs leading-5 text-apple-secondary">This account has full access to staff, students, classes, academic years and reports. Keep its PIN private.</p>
       </div>

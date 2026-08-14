@@ -80,7 +80,7 @@
   <meta name="description" content="Secure school attendance for teachers." />
 </svelte:head>
 
-<div class="relative flex min-h-dvh overflow-hidden bg-white">
+<div class="relative flex min-h-dvh overflow-hidden bg-apple-bg">
   <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
     <div class="absolute -top-24 -left-32 size-[28rem] rounded-full bg-apple-blue/[0.07] blur-3xl"></div>
     <div class="absolute -right-48 bottom-[-10rem] size-[34rem] rounded-full bg-apple-indigo/[0.08] blur-3xl"></div>
@@ -88,7 +88,7 @@
 
   <section class="relative flex min-h-dvh w-full flex-col px-5 py-6 sm:px-8 lg:w-[52%] lg:px-16 lg:py-10 xl:px-24">
     <header class="flex items-center gap-3">
-      <span class="grid size-10 place-items-center rounded-[13px] bg-apple-blue text-white shadow-lg shadow-apple-blue/20">
+      <span class="grid size-10 place-items-center rounded-[13px] bg-apple-blue text-black shadow-lg shadow-apple-blue/20">
         <GraduationCap size={23} />
       </span>
       <div>
@@ -131,7 +131,7 @@
           </button>
 
           {#if error}
-            <div class="mb-4 flex items-start gap-2 rounded-xl bg-apple-red/[0.08] p-3 text-sm font-medium text-apple-red" role="alert">
+            <div class="mb-4 flex items-start gap-2 rounded-xl bg-apple-red/[0.16] p-3 text-sm font-medium text-apple-red" role="alert">
               <CircleAlert class="mt-0.5 shrink-0" size={17} />
               <span>{error}</span>
             </div>
@@ -167,11 +167,11 @@
         {#if loading}
           <div class="space-y-3" aria-label="Loading accounts">
             {#each Array(3) as _}
-              <div class="h-[72px] animate-pulse rounded-2xl bg-apple-bg"></div>
+              <div class="h-[72px] animate-pulse rounded-2xl border border-apple-separator bg-apple-surface"></div>
             {/each}
           </div>
         {:else if error}
-          <div class="rounded-2xl border border-apple-red/15 bg-apple-red/[0.05] p-5 text-center">
+          <div class="rounded-2xl border border-apple-red/50 bg-apple-red/[0.16] p-5 text-center">
             <CircleAlert class="mx-auto text-apple-red" size={28} />
             <p class="mt-3 text-sm font-semibold">Attendance server unavailable</p>
             <p class="mt-1 text-sm leading-5 text-apple-secondary">{error}</p>
@@ -180,14 +180,14 @@
             </button>
           </div>
         {:else if users.length === 0}
-          <div class="rounded-2xl bg-apple-bg p-6 text-center">
+          <div class="rounded-2xl border border-apple-separator bg-apple-surface p-6 text-center">
             <p class="font-semibold">No active staff accounts</p>
             <p class="mt-1 text-sm text-apple-secondary">Ask a school administrator to add or enable your account.</p>
           </div>
         {:else}
           <div class="space-y-2.5">
             {#each users as user}
-              <button class="group flex w-full items-center gap-3.5 rounded-2xl border border-apple-separator bg-white p-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-apple-blue/25 hover:shadow-md focus-visible:ring-2 focus-visible:ring-apple-blue" type="button" onclick={() => chooseUser(user)}>
+              <button class="group flex w-full items-center gap-3.5 rounded-2xl border border-apple-separator bg-apple-surface p-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-apple-blue/25 hover:shadow-md focus-visible:ring-2 focus-visible:ring-apple-blue" type="button" onclick={() => chooseUser(user)}>
                 <span class="grid size-11 shrink-0 place-items-center rounded-full bg-apple-blue/[0.09] font-bold text-apple-blue">
                   {user.display_name.slice(0, 1).toUpperCase()}
                 </span>
@@ -213,11 +213,11 @@
         <ShieldCheck size={29} />
       </span>
       <blockquote class="text-[30px] leading-[1.2] font-semibold tracking-[-0.035em]">“Less time on registers. More time for teaching.”</blockquote>
-      <p class="mt-6 max-w-sm text-[15px] leading-6 text-white/60">A focused attendance workspace designed for the pace of a real classroom.</p>
+      <p class="mt-6 max-w-sm text-[15px] leading-6 text-white/75">A focused attendance workspace designed for the pace of a real classroom.</p>
       <div class="mt-10 flex gap-7 border-t border-white/10 pt-6">
-        <div><div class="text-xl font-bold">7</div><div class="mt-1 text-xs text-white/50">period view</div></div>
-        <div><div class="text-xl font-bold">1 tap</div><div class="mt-1 text-xs text-white/50">to mark status</div></div>
-        <div><div class="text-xl font-bold">Live</div><div class="mt-1 text-xs text-white/50">school reports</div></div>
+        <div><div class="text-xl font-bold">7</div><div class="mt-1 text-xs text-white/80">period view</div></div>
+        <div><div class="text-xl font-bold">1 tap</div><div class="mt-1 text-xs text-white/80">to mark status</div></div>
+        <div><div class="text-xl font-bold">Live</div><div class="mt-1 text-xs text-white/80">school reports</div></div>
       </div>
     </div>
   </aside>

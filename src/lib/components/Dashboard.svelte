@@ -81,7 +81,7 @@
   </header>
 
   {#if !bootstrap.academic_year}
-    <div class="mb-6 flex items-start gap-3 rounded-2xl border border-apple-orange/20 bg-apple-orange/[0.08] p-4 text-sm">
+    <div class="mb-6 flex items-start gap-3 rounded-2xl border border-apple-orange/60 bg-apple-orange/[0.16] p-4 text-sm">
       <CircleAlert class="mt-0.5 shrink-0 text-apple-orange" size={20} />
       <div><p class="font-semibold">No active academic year</p><p class="mt-0.5 text-apple-secondary">An administrator must create an active academic year before attendance can be submitted.</p></div>
     </div>
@@ -174,7 +174,7 @@
       <div class="rounded-2xl bg-[#071B33] p-5 text-white shadow-sm">
         <Clock3 class="text-apple-blue" size={21} />
         <h3 class="mt-4 font-semibold">Copy-previous is on</h3>
-        <p class="mt-1.5 text-xs leading-5 text-white/60">Each new period starts with statuses from the most recently submitted period, so you only mark changes.</p>
+        <p class="mt-1.5 text-xs leading-5 text-white/75">Each new period starts with statuses from the most recently submitted period, so you only mark changes.</p>
       </div>
     </aside>
   </div>
