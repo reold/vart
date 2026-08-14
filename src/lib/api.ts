@@ -27,6 +27,29 @@ const configuredBase = (import.meta.env.VITE_API_URL as string | undefined)?.rep
  */
 export const API_BASE = configuredBase ?? 'https://vart.reold.workers.dev';
 
+const SESSION_TOKEN_KEY = `vart.session:${API_BASE}`;
+let memorySessionToken: string | null = null;
+
+function getSessionToken(): string | null {
+  if (typeof window === 'undefined') return memorySessionToken;
+  try {
+    return window.localStorage.getItem(SESSION_TOKEN_KEY) ?? memorySessionToken;
+  } catch {
+    return memorySessionToken;
+  }
+}
+
+function setSessionToken(token: string | null) {
+  memorySessionToken = token;
+  if (typeof window === 'undefined') return;
+  try {
+    if (token) window.localStorage.setItem(SESSION_TOKEN_KEY, token);
+    else window.localStorage.removeItem(SESSION_TOKEN_KEY);
+  } catch {
+    // Memory storage still keeps the current tab signed in when storage is blocked.
+  }
+}
+
 export class ApiError extends Error {
   status: number;
   details: string[];
@@ -42,6 +65,10 @@ export class ApiError extends Error {
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers);
   headers.set('Accept', 'application/json');
+  const sessionToken = getSessionToken();
+  if (sessionToken && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${sessionToken}`);
+  }
   if (options.body && !(options.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }
@@ -89,9 +116,24 @@ export const api = {
     request<WriteResult>('/setup/create-first-admin', json('POST', body)),
 
   publicUsers: () => request<PublicUser[]>('/auth/users-public'),
-  login: (user_id: string, pin: string) =>
-    request<{ success: boolean; user: Me }>('/auth/login', json('POST', { user_id, pin })),
-  logout: () => request<WriteResult>('/auth/logout', json('POST')),
+  login: async (user_id: string, pin: string) => {
+    const result = await request<{
+      success: boolean;
+      user: Me;
+      token?: string;
+      token_type?: 'Bearer';
+      expires_in?: number;
+    }>('/auth/login', json('POST', { user_id, pin }));
+    setSessionToken(result.token ?? null);
+    return result;
+  },
+  logout: async () => {
+    try {
+      return await request<WriteResult>('/auth/logout', json('POST'));
+    } finally {
+      setSessionToken(null);
+    }
+  },
   me: () => request<Me>('/me'),
   reauthPin: (pin: string) => request<WriteResult>('/auth/reauth-pin', json('POST', { pin })),
 

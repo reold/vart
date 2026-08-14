@@ -51,9 +51,9 @@ See `.env.example` for a starting point.
 
 The workflow in `.github/workflows/deploy.yml` builds the static app at `/vart` and points it at the deployed Worker.
 
-There is one backend requirement for authenticated requests from GitHub Pages: the frontend origin must be in the Worker’s `ALLOWED_ORIGINS`, and the session cookie must be cross-site compatible (`SameSite=None; Secure`). The API currently documents `SameSite=Lax`; browsers will not attach that cookie to fetches from `reold.github.io`, even when CORS is configured correctly. Frontend code cannot bypass an HttpOnly SameSite cookie.
+The Worker must include the localhost and GitHub Pages origins in `ALLOWED_ORIGINS` and allow the `Authorization` request header. The frontend uses the session bearer token returned by `POST /auth/login`, stores it in browser local storage, and sends it on later requests. Logout revokes the server session and removes the stored token.
 
-Because localhost and GitHub Pages now call the Worker directly, the Worker must allow each frontend origin through `ALLOWED_ORIGINS`. Authenticated cross-site requests also require the session cookie to use `SameSite=None; Secure`; with the currently documented `SameSite=Lax` setting, public endpoints work cross-origin but browsers will not attach the authenticated session cookie.
+This bearer flow is the API’s documented fallback for cross-site frontends. It avoids third-party-cookie and `SameSite` restrictions on GitHub Pages, Safari and iOS. A future same-origin deployment should prefer the API’s HttpOnly cookie because it keeps the session token unavailable to JavaScript.
 
 ## API behavior represented in the UI
 

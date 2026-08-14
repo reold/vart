@@ -64,7 +64,7 @@
     } catch (e) {
       appError = errorMessage(e);
       if (e instanceof ApiError && e.status === 401 && API_BASE) {
-        appError = 'Your sign-in succeeded, but the browser could not reuse the session. This static site needs the API cookie set to SameSite=None, or the app and API must share one origin.';
+        appError = 'The attendance server rejected the new session. Sign out and try again.';
       }
       mode = 'error';
     }
