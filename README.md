@@ -22,12 +22,12 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:5173>. Vite proxies all API paths to `https://vart.reold.workers.dev`, so the browser sees a same-origin session and avoids CORS/SameSite problems.
+Open <http://localhost:5173>. The browser calls `https://vart.reold.workers.dev` directly; Vite does not proxy or rewrite API requests.
 
-To use a local Worker instead:
+To target a different Worker deployment:
 
 ```bash
-VITE_API_TARGET=http://localhost:8787 npm run dev
+VITE_API_URL=https://another-worker.example npm run dev
 ```
 
 Useful checks:
@@ -42,8 +42,7 @@ npm run preview
 
 | Variable | Purpose | Default |
 |---|---|---|
-| `VITE_API_TARGET` | Server target for the local Vite proxy | `https://vart.reold.workers.dev` |
-| `VITE_API_URL` | Browser-facing API origin in a static production build | `https://vart.reold.workers.dev` |
+| `VITE_API_URL` | Browser-facing API origin in development and production | `https://vart.reold.workers.dev` |
 | `BASE_PATH` | SvelteKit asset base, such as `/vart` on GitHub Pages | empty |
 
 See `.env.example` for a starting point.
@@ -54,7 +53,7 @@ The workflow in `.github/workflows/deploy.yml` builds the static app at `/vart` 
 
 There is one backend requirement for authenticated requests from GitHub Pages: the frontend origin must be in the Worker’s `ALLOWED_ORIGINS`, and the session cookie must be cross-site compatible (`SameSite=None; Secure`). The API currently documents `SameSite=Lax`; browsers will not attach that cookie to fetches from `reold.github.io`, even when CORS is configured correctly. Frontend code cannot bypass an HttpOnly SameSite cookie.
 
-For the current `SameSite=Lax` backend, serve the built app and API through one origin (the preferred deployment), or update the Worker cookie to `SameSite=None; Secure` and allow `https://reold.github.io`. Local development already works through the included same-origin Vite proxy.
+Because localhost and GitHub Pages now call the Worker directly, the Worker must allow each frontend origin through `ALLOWED_ORIGINS`. Authenticated cross-site requests also require the session cookie to use `SameSite=None; Secure`; with the currently documented `SameSite=Lax` setting, public endpoints work cross-origin but browsers will not attach the authenticated session cookie.
 
 ## API behavior represented in the UI
 

@@ -3,18 +3,7 @@ import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
-const apiTarget = process.env.VITE_API_TARGET || 'https://vart.reold.workers.dev';
 const basePath = (process.env.BASE_PATH || '') as '' | `/${string}`;
-const apiPrefixes = [
-  '/auth',
-  '/me',
-  '/app',
-  '/classes',
-  '/attendance',
-  '/admin',
-  '/reports',
-  '/setup',
-];
 
 export default defineConfig({
   plugins: [
@@ -40,16 +29,6 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     allowedHosts: true,
-    proxy: Object.fromEntries(
-      apiPrefixes.map((prefix) => [
-        prefix,
-        {
-          target: apiTarget,
-          changeOrigin: true,
-          secure: true,
-        },
-      ]),
-    ),
   },
   preview: {
     host: '0.0.0.0',

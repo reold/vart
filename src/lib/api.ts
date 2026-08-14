@@ -22,12 +22,10 @@ import type {
 const configuredBase = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '');
 
 /**
- * Dev requests are same-origin and proxied by Vite. A static GitHub Pages build
- * uses the configured Worker URL. VITE_API_URL can point at another deployment.
+ * Every browser build talks directly to the Worker, including localhost.
+ * VITE_API_URL can point at a different API deployment when needed.
  */
-export const API_BASE = import.meta.env.DEV
-  ? ''
-  : (configuredBase ?? 'https://vart.reold.workers.dev');
+export const API_BASE = configuredBase ?? 'https://vart.reold.workers.dev';
 
 export class ApiError extends Error {
   status: number;
