@@ -11,6 +11,7 @@
     KeyRound,
     LoaderCircle,
     MoreHorizontal,
+    Pencil,
     Plus,
     RefreshCw,
     Search,
@@ -26,7 +27,7 @@
   let { bootstrap }: { bootstrap: Bootstrap } = $props();
 
   type Tab = 'staff' | 'students' | 'classes' | 'subjects' | 'enrollments' | 'years';
-  type ModalType = 'staff' | 'student' | 'class' | 'subject' | 'enrollment' | 'year' | 'pin' | null;
+  type ModalType = 'staff' | 'edit-staff' | 'student' | 'class' | 'subject' | 'enrollment' | 'year' | 'pin' | null;
 
   let tab = $state<Tab>('staff');
   let modal = $state<ModalType>(null);
@@ -127,6 +128,16 @@
     modal = type;
   }
 
+  function editUser(user: User) {
+    resetForm();
+    selectedUser = user;
+    formName = user.display_name;
+    formLogin = user.login_name ?? '';
+    formRole = user.role;
+    formSubjectId = user.default_subject_id ?? '';
+    modal = 'edit-staff';
+  }
+
   function notify(message: string) {
     toast = message;
     setTimeout(() => { if (toast === message) toast = ''; }, 3000);
@@ -140,6 +151,15 @@
         await api.createUser({ display_name: formName.trim(), login_name: formLogin.trim() || undefined, role: formRole, pin: formPin, default_subject_id: formSubjectId || undefined });
         users = await api.users();
         notify('Staff account created');
+      } else if (modal === 'edit-staff' && selectedUser) {
+        await api.updateUser(selectedUser.id, {
+          display_name: formName.trim(),
+          role: formRole,
+          ...(formLogin.trim() ? { login_name: formLogin.trim() } : {}),
+          ...(formSubjectId ? { default_subject_id: formSubjectId } : {}),
+        });
+        users = await api.users();
+        notify('Staff member updated');
       } else if (modal === 'student') {
         await api.createStudent({ admission_no: formAdmission.trim(), name: formName.trim() });
         students = await api.students();
@@ -222,6 +242,11 @@
   function roleLabel(role: Role) {
     return role === 'super_admin' ? 'Super admin' : role === 'teacher_admin' ? 'Teacher admin' : 'Teacher';
   }
+
+  function subjectLabel(subjectId: string | null) {
+    if (!subjectId) return null;
+    return subjects.find((subject) => subject.id === subjectId)?.name ?? 'Unknown subject';
+  }
 </script>
 
 <svelte:head><title>Manage school · VART</title></svelte:head>
@@ -259,11 +284,13 @@
       </div>
       <div class="surface-card overflow-hidden p-0!">
         {#each filteredUsers as user}
+          {@const assignedSubject = subjectLabel(user.default_subject_id)}
           <div class="flex items-center gap-3 border-b border-apple-separator p-4 last:border-0 sm:px-5">
             <span class="student-avatar {user.status === 'active' ? 'bg-apple-indigo/10 text-apple-indigo' : 'bg-apple-fill text-apple-tertiary'}">{user.display_name.slice(0, 1)}</span>
-            <span class="min-w-0 flex-1"><span class="flex items-center gap-2"><strong class="truncate text-sm sm:text-[15px]">{user.display_name}</strong>{#if user.id === bootstrap.user.id}<span class="badge-blue">You</span>{/if}</span><small class="block text-apple-secondary">{roleLabel(user.role)}{user.login_name ? ` · ${user.login_name}` : ''}</small></span>
+            <span class="min-w-0 flex-1"><span class="flex items-center gap-2"><strong class="truncate text-sm sm:text-[15px]">{user.display_name}</strong>{#if user.id === bootstrap.user.id}<span class="badge-blue">You</span>{/if}</span><small class="block text-apple-secondary">{roleLabel(user.role)}{assignedSubject ? ` · ${assignedSubject}` : ' · No default subject'}{user.login_name ? ` · ${user.login_name}` : ''}</small></span>
             <span class="hidden rounded-full px-2.5 py-1 text-[11px] font-semibold sm:block {user.status === 'active' ? 'bg-apple-green/10 text-apple-green' : 'bg-apple-fill text-apple-secondary'}">{user.status === 'active' ? 'Active' : 'Disabled'}</span>
             <div class="flex gap-1">
+              <button class="icon-button" type="button" title="Edit staff member" aria-label={`Edit ${user.display_name}`} onclick={() => editUser(user)}><Pencil size={16} /></button>
               <button class="icon-button" type="button" title="Reset PIN" aria-label={`Reset PIN for ${user.display_name}`} onclick={() => resetPin(user)}><KeyRound size={16} /></button>
               {#if user.id !== bootstrap.user.id}<button class="secondary-button h-9 px-3! text-xs" type="button" onclick={() => toggleUser(user)}>{user.status === 'active' ? 'Disable' : 'Enable'}</button>{/if}
             </div>
@@ -334,16 +361,19 @@
 
 {#if modal}
   <Modal
-    title={modal === 'staff' ? 'Add staff member' : modal === 'student' ? 'Add student' : modal === 'class' ? 'Add class' : modal === 'subject' ? 'Add subject' : modal === 'enrollment' ? 'Enroll student' : modal === 'year' ? 'Add academic year' : `Reset ${selectedUser?.display_name}’s PIN`}
+    title={modal === 'staff' ? 'Add staff member' : modal === 'edit-staff' ? `Edit ${selectedUser?.display_name}` : modal === 'student' ? 'Add student' : modal === 'class' ? 'Add class' : modal === 'subject' ? 'Add subject' : modal === 'enrollment' ? 'Enroll student' : modal === 'year' ? 'Add academic year' : `Reset ${selectedUser?.display_name}’s PIN`}
     description={modal === 'pin' ? 'Their existing PIN will stop working immediately.' : undefined}
     onClose={() => { modal = null; error = ''; }}
   >
     <form class="space-y-4" onsubmit={(event) => { event.preventDefault(); void submitModal(); }}>
-      {#if modal === 'staff'}
+      {#if modal === 'staff' || modal === 'edit-staff'}
         <label><span class="field-label">Display name</span><input class="field-input" bind:value={formName} autocomplete="off" required /></label>
         <label><span class="field-label">Login name <span class="font-normal text-apple-tertiary">(optional)</span></span><input class="field-input" bind:value={formLogin} autocomplete="off" /></label>
-        <div class="grid gap-4 sm:grid-cols-2"><label><span class="field-label">Role</span><span class="relative block"><select class="field-input appearance-none pr-9" bind:value={formRole}><option value="teacher">Teacher</option><option value="teacher_admin">Teacher admin</option>{#if bootstrap.user.role === 'super_admin'}<option value="super_admin">Super admin</option>{/if}</select><ChevronDown class="pointer-events-none absolute top-3.5 right-3 text-apple-tertiary" size={16} /></span></label><label><span class="field-label">6-digit PIN</span><input class="field-input tracking-[0.2em]" bind:value={formPin} type="password" inputmode="numeric" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" required /></label></div>
-        <label><span class="field-label">Default subject <span class="font-normal text-apple-tertiary">(optional)</span></span><span class="relative block"><select class="field-input appearance-none pr-9" bind:value={formSubjectId}><option value="">None</option>{#each subjects.filter((item) => item.active === 1) as subject}<option value={subject.id}>{subject.name}</option>{/each}</select><ChevronDown class="pointer-events-none absolute top-3.5 right-3 text-apple-tertiary" size={16} /></span></label>
+        <div class="grid gap-4 {modal === 'staff' ? 'sm:grid-cols-2' : ''}">
+          <label><span class="field-label">Role</span><span class="relative block"><select class="field-input appearance-none pr-9" bind:value={formRole}><option value="teacher">Teacher</option><option value="teacher_admin">Teacher admin</option>{#if bootstrap.user.role === 'super_admin'}<option value="super_admin">Super admin</option>{/if}</select><ChevronDown class="pointer-events-none absolute top-3.5 right-3 text-apple-tertiary" size={16} /></span></label>
+          {#if modal === 'staff'}<label><span class="field-label">6-digit PIN</span><input class="field-input tracking-[0.2em]" bind:value={formPin} type="password" inputmode="numeric" pattern="[0-9][0-9][0-9][0-9][0-9][0-9]" maxlength="6" autocomplete="new-password" required /></label>{/if}
+        </div>
+        <label><span class="field-label">Default subject <span class="font-normal text-apple-tertiary">(optional)</span></span><span class="relative block"><select class="field-input appearance-none pr-9" bind:value={formSubjectId}><option value="">{modal === 'staff' ? 'None' : 'Leave unchanged'}</option>{#each subjects.filter((item) => item.active === 1) as subject}<option value={subject.id}>{subject.name}</option>{/each}</select><ChevronDown class="pointer-events-none absolute top-3.5 right-3 text-apple-tertiary" size={16} /></span></label>
       {:else if modal === 'student'}
         <label><span class="field-label">Student name</span><input class="field-input" bind:value={formName} required /></label><label><span class="field-label">Admission number</span><input class="field-input" bind:value={formAdmission} required /></label>
       {:else if modal === 'class'}
